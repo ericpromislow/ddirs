@@ -5,6 +5,8 @@ for i in {1..50} ; do
 done
 
 function d() {
+  case $# in
+  0) 
   for i in {1..30} ; do
      x=d$i
      y=${!x}
@@ -12,6 +14,33 @@ function d() {
        echo $i:`basename $y` : `echo $y | sed -e s@$HOME@'~'@`
      fi
   done
+  return
+  ;;
+  esac
+  arg=$1
+  shift
+  case $arg in
+  ls) ls -CF ~/.d/ $* ;;
+  grep)
+     case $# in
+     0) echo "$0 $arg: Usage: $0 $1 grep args";
+	return
+     ;;
+     esac
+     $arg $* ~/.d/*
+     ;;
+  rm|cat)
+     case $# in
+     0) echo "$0 $arg: Usage: $0 name"
+	return
+     ;;
+     esac
+     $arg ~/.d/d${1}.txt
+     ;;
+  save) dsave $* ;;
+  load) dload $* ;;
+   *) echo "d [ls | grep ...], got \"$@\"" ;;
+   esac     
 }
 
 function dsave() {
